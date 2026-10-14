@@ -13,7 +13,7 @@
 <br><br>
 
 [![Watch introduction](https://img.shields.io/badge/Watch_the_Introduction-D92332?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/RhR5dDCjA2M)
-[![Read proposal](https://img.shields.io/badge/Read_the_Proposal-242B36?style=for-the-badge&logo=readthedocs&logoColor=white)](./ALIBI_Project_Proposal.pdf)
+[![Read proposal](https://img.shields.io/badge/Read_the_Proposal-242B36?style=for-the-badge&logo=readthedocs&logoColor=white)](./ALIBI_AIORI3_Proposal.pdf)
 
 <br>
 
@@ -89,7 +89,7 @@ flowchart TB
 
 ## Proposal & project status
 
-**[Read the ALIBI project proposal →](./ALIBI_Project_Proposal.pdf)**
+**[Read the ALIBI project proposal →](./ALIBI_AIORI3_Proposal.pdf)**
 
 The proposal contains the research context, relevant prior work, optimization rationale, architecture, data flow, and development milestones. The README is intentionally brief; the PDF is the technical reference.
 
