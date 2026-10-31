@@ -19,7 +19,7 @@ AIORI Hackathon 3 | PS-013
 
 **[Project introduction](https://youtu.be/RhR5dDCjA2M) · [Project proposal](ALIBI_AIORI3_Proposal.pdf) · [Live demo guide](DEMO_READY.md)**
 
-Full demonstration: **`DEMO_VIDEO_URL_TO_BE_ADDED`**
+Full demonstration: **[View here](https://youtu.be/FRZaIG4-j14)**
 
 <!-- FINAL DEMONSTRATION THUMBNAIL: insert the approved video thumbnail and URL here. -->
 
