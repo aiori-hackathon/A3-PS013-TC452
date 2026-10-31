@@ -1,0 +1,3 @@
+Oct 28 04:42:54 host-a sshd[101]: Accepted publickey for analyst from 198.51.100.24 port 49812 request_id=R7
+Oct 28 04:43:54 host-a sshd[101]: Session activity for analyst from 198.51.100.24 request_id=R8
+Oct 28 04:44:54 host-a sshd[101]: Session closed for analyst from 198.51.100.24 request_id=R9

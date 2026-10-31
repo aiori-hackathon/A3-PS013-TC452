@@ -1,0 +1,75 @@
+{
+  "dataset": "Elastic examples / NGINX combined sample logs",
+  "measured_at": "2026-10-31T17:47:43.231304+00:00",
+  "commit": "6d86454ebb7a850bcd7e80abe86fe683370018a6",
+  "source_url": "https://raw.githubusercontent.com/elastic/examples/6d86454ebb7a850bcd7e80abe86fe683370018a6/Common%20Data%20Formats/nginx_logs/nginx_logs",
+  "source_bytes": 6991577,
+  "source_records": 51462,
+  "source_sha256": "526832433ab552466dc8623390fd92dc052b4f301b2eec94836a5c42a46937df",
+  "selection": "First 1000 physical lines, splitlines(keepends=True), exact unchanged byte prefix",
+  "subset_bytes": 133423,
+  "subset_sha256": "787cdbb7452220f81735b46520178bdbb04667b43999a6b91e6371139ca3eebe",
+  "runs": [
+    {
+      "run": 1,
+      "investigation_id": "c4fe7a10-49b3-4507-98f5-76780ca8c6fd",
+      "input_records": 1000,
+      "normalized": 1000,
+      "gaps": 0,
+      "coverage_percent": 100.0,
+      "import_seconds": 0.4534723999995549,
+      "records_per_second": 2205.205873612113,
+      "query_seconds": 0.024170699999558565,
+      "query_matches": 1000,
+      "integrity": "verified",
+      "original_download_matches": true
+    },
+    {
+      "run": 2,
+      "investigation_id": "4feb8eab-33c5-40cc-bd11-b6ad8290a9eb",
+      "input_records": 1000,
+      "normalized": 1000,
+      "gaps": 0,
+      "coverage_percent": 100.0,
+      "import_seconds": 0.1696481999997559,
+      "records_per_second": 5894.551194775064,
+      "query_seconds": 0.022048699999686505,
+      "query_matches": 1000,
+      "integrity": "verified",
+      "original_download_matches": true
+    },
+    {
+      "run": 3,
+      "investigation_id": "1240011d-2dc9-4780-9461-4d14b001fed6",
+      "input_records": 1000,
+      "normalized": 1000,
+      "gaps": 0,
+      "coverage_percent": 100.0,
+      "import_seconds": 0.1669769999998607,
+      "records_per_second": 5988.848763607169,
+      "query_seconds": 0.026382200000625744,
+      "query_matches": 1000,
+      "integrity": "verified",
+      "original_download_matches": true
+    }
+  ],
+  "median_import_seconds": 0.1696481999997559,
+  "median_records_per_second": 5894.551194775064,
+  "median_query_seconds": 0.024170699999558565,
+  "pdf_seconds_single_run": 5.598301499999252,
+  "environment": {
+    "python": "3.12.14",
+    "os": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "timer": "time.perf_counter",
+    "transport": "local HTTP; same running backend and SQLite; fresh investigation per run"
+  },
+  "limitations": [
+    "Three sequential fresh-investigation runs, not independent machines/process restarts; warm caches possible.",
+    "Prefix selection is reproducible, not random or representative.",
+    "Coverage is parser acceptance, not incident detection accuracy.",
+    "No labeled incident ground truth; automated runtime is not human investigation time.",
+    "Import timing includes HTTP upload, preservation, parsing and persistence; excludes download, case creation, verification and report generation.",
+    "PDF timing is one run; search is GET with a 50-result page."
+  ]
+}

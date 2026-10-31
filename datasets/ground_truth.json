@@ -1,0 +1,20 @@
+{
+  "A_conflicting_clocks": {
+    "description": "Synthetic host clock is 73 seconds slow; web has explicit +05:30. Shared IDs are associations, not causal proof.",
+    "files": [{"filename":"web.log","source":"Web gateway","timezone":"UTC","year":2026,"offset_seconds":0}, {"filename":"auth.log","source":"Linux host A","timezone":"UTC","year":2026,"offset_seconds":73}],
+    "parsed":6,"gaps":0,
+    "expected_times": {"web.log:1":"2026-10-28T04:44:07.000000Z","web.log:2":"2026-10-28T04:45:07.000000Z","web.log:3":"2026-10-28T04:46:07.000000Z","auth.log:1":"2026-10-28T04:44:07.000000Z","auth.log:2":"2026-10-28T04:45:07.000000Z","auth.log:3":"2026-10-28T04:46:07.000000Z"}
+  },
+  "B_cross_source": {
+    "description":"Alternating web and SSH observations share an IP. The fixture does not establish a causal relationship or actor identity.",
+    "files":[{"filename":"web.log","source":"Web gateway","timezone":"UTC","offset_seconds":0},{"filename":"auth.log","source":"Linux host B","timezone":"UTC","offset_seconds":0}],
+    "parsed":6,"gaps":0,
+    "expected_times":{"web.log:1":"2026-10-28T04:40:00.000000Z","auth.log:1":"2026-10-28T04:41:00.000000Z","web.log:2":"2026-10-28T04:42:00.000000Z","auth.log:2":"2026-10-28T04:43:00.000000Z","web.log:3":"2026-10-28T04:44:00.000000Z","auth.log:3":"2026-10-28T04:45:00.000000Z"}
+  },
+  "C_gaps_conflicts": {
+    "description":"Five unnormalizable records, including blank and invalid UTF-8. A reused identifier has differing statuses and timestamps move backwards. No proof of malicious activity or missing unseen events.",
+    "files":[{"filename":"web.log","source":"Web gateway","timezone":"UTC","year":2026,"offset_seconds":0},{"filename":"auth.log","source":"Linux host C","timezone":"UTC","year":2026,"offset_seconds":0}],
+    "parsed":3,"gaps":5,
+    "expected_times":{"web.log:1":"2026-10-28T04:50:00.000000Z","web.log:2":"2026-10-28T04:49:00.000000Z","auth.log:1":"2026-10-28T04:52:00.000000Z"}
+  }
+}

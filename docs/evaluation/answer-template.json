@@ -1,0 +1,11 @@
+{
+  "times": {},
+  "gap_count": null,
+  "gap_records": [],
+  "sha256_original": {"web.log": "", "auth.log": ""},
+  "sha256_copy_or_import": {"web.log": "", "auth.log": ""},
+  "clock_assumptions": "",
+  "findings_and_limitations": "",
+  "trial_notes_including_interruptions": "",
+  "completed": false
+}

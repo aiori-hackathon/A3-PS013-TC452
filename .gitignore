@@ -55,6 +55,11 @@ cover/
 
 # Environments
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
 .venv
 env/
 venv/
@@ -92,3 +97,11 @@ case_*_vault/
 *.sqlite3
 *.db
 *.log
+
+# Local prototype dependencies, evidence and generated reports
+node_modules/
+.alibi/
+output/
+tmp/
+*.tsbuildinfo
+!datasets/**/*.log
