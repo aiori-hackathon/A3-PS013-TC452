@@ -1,5 +1,5 @@
 import { chromium } from "playwright";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
 
@@ -70,6 +70,10 @@ try {
     path: path.join(output, "timeline-desktop.png"),
     fullPage: true,
   });
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.screenshot({ path: path.join(output, "timeline-tablet.png"), fullPage: true });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), "Tablet should not overflow");
+  await page.setViewportSize({ width: 1440, height: 1050 });
   await page
     .getByRole("button", { name: "Inspect web.log line 1", exact: true })
     .click();
@@ -127,6 +131,12 @@ try {
       .subarray(0, 4)
       .equals(Buffer.from("%PDF")),
   );
+  const jsonDownload = page.waitForEvent("download");
+  await page.getByRole("link", { name: /JSON report/ }).click();
+  await (await jsonDownload).saveAs(path.join(output, "browser-report.json"));
+  const downloadedReport = JSON.parse(await readFile(path.join(output, "browser-report.json"), "utf8"));
+  assert.equal(downloadedReport.timeline.length, 6);
+  assert.ok(downloadedReport.audit.length > 0, "Lossless JSON must retain audit history");
   await page.getByRole("button", { name: "Timeline", exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
@@ -221,9 +231,37 @@ try {
       { exact: true },
     )
     .waitFor();
+  // Review the malformed-record scenario through the actual UI.
+  const gapCaseResponse = await page.request.post("http://127.0.0.1:5173/api/investigations", {
+    data: { name: "SYNTHETIC / Release gap review", description: "Scenario C browser release check" }
+  });
+  assert.ok(gapCaseResponse.ok());
+  const gapCase = (await gapCaseResponse.json()).id;
+  for (const filename of ["web.log", "auth.log"]) {
+    const imported = await page.request.post("http://127.0.0.1:5173/api/investigations/" + gapCase + "/evidence", {
+      multipart: {
+        file: { name: filename, mimeType: "text/plain", buffer: await readFile(path.join(root, "datasets/C_gaps_conflicts", filename)) },
+        options: JSON.stringify({ source: filename, timezone: "UTC", year: 2026 })
+      }
+    });
+    assert.ok(imported.ok());
+  }
+  await page.reload();
+  await page.getByLabel("Active investigation", { exact: true }).selectOption(gapCase);
+  await page.getByRole("button", { name: /Gaps & review/ }).click();
+  await page.getByRole("heading", { name: "Invalid UTF-8; original bytes preserved", exact: true }).waitFor();
+  assert.equal(await page.locator(".gap-item").count(), 7, "Five gaps and two review findings");
+  await page.screenshot({ path: path.join(output, "gap-review.png"), fullPage: true });
+  await page.getByRole("button", { name: "Inspect original", exact: true }).last().click();
+  await page.getByText("Original SHA-256 verified", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   assert.deepEqual(failures, [], "No browser console or JavaScript errors");
+  await writeFile(path.join(output, "smoke-results.json"), JSON.stringify({
+    checked_at: new Date().toISOString(), status: "passed", viewports: [1440,768,390],
+    console_errors: failures, checks: ["navigation","two-format upload","search and filter","source record","manual clock","integrity","PDF download","JSON audit export","anchor preview and approval","five gaps and two findings","responsive layout"]
+  }, null, 2));
   console.log(
-    "PASS: create, upload both formats, timeline, search, filter, provenance, clock correction, verify, PDF download, mobile layout, anchor preview and approval; zero browser errors.",
+    "PASS: navigation, upload, timeline, search/filter, provenance, clocks, verification, PDF/JSON, anchor approval, five gaps/two findings, 1440/768/390 layouts; zero browser errors.",
   );
 } catch (error) {
   await page.screenshot({

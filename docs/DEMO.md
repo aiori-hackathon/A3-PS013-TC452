@@ -1,6 +1,8 @@
 # Five-minute demonstration
 
-Start with `pwsh -NoProfile -File scripts/start.ps1`, then open http://127.0.0.1:5173. Optional: run `.\.venv\Scripts\python.exe scripts/smoke.py` to create all three labeled synthetic investigations and export reports. Every smoke run creates new investigations intentionally.
+The current release handoff is [DEMO_READY.md](../DEMO_READY.md), including verified Windows PowerShell 5.1 commands, all three scenarios and emergency fallbacks. Use that guide for presentation.
+
+Start with `powershell.exe -NoProfile -File scripts/start.ps1`, then open http://127.0.0.1:5173. Optional: run `.\.venv\Scripts\python.exe scripts/smoke.py` to create all three labeled synthetic investigations and export reports. Every smoke run creates new investigations intentionally.
 
 **0:00-0:45 / Create and preserve.** Create `Demo / conflicting clocks`. Import `datasets/A_conflicting_clocks/web.log`, source `Web gateway`, timezone `UTC`, no year needed, correction `0`. Show the preserved SHA-256 and parsed count.
 

@@ -1,5 +1,7 @@
 # Manual versus assisted triage protocol
 
+**Release pilot:** Anurag and Sangram should follow [EVALUATION_PILOT.md](EVALUATION_PILOT.md), which specifies the two-person assignment, clock sheets, timing, answer template and reviewer key. The broader protocol below is retained for a later study with independent participants.
+
 Status: **human measurements pending**. The automated smoke durations measure software processing and export only. They are not a manual baseline, investigator triage time, or evidence of a speedup. PS-013's human comparison remains open until real trials are recorded.
 
 Use at least three participants who can read basic logs. Record participant pseudonyms, prior experience, machine/OS, tool versions, dataset hashes, trial order and interruptions in the study notes. Obtain consent for timing. Use synthetic data only.

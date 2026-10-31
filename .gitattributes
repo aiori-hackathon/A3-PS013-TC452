@@ -1,0 +1,2 @@
+# Synthetic evidence is byte-sensitive; never rewrite its line endings on checkout.
+datasets/**/*.log -text

@@ -314,7 +314,7 @@ export default function App() {
             ALIBI<span className="brand-dot">.</span>
           </span>
         </a>
-        <p className="brand-caption">EVIDENCE FIRST. ALWAYS.</p>
+        <p className="brand-caption">INCIDENT RECONSTRUCTION</p>
         <div className="sidebar-label">
           WORKSPACE <span>LOCAL</span>
         </div>
@@ -377,7 +377,7 @@ export default function App() {
       <div className="main-shell">
         <header className="topbar">
           <div>
-            <span className="breadcrumb">Investigations</span>
+            <span className="breadcrumb">ALIBI / Team EXPOSE</span>
             <ChevronRight size={14} />
             <strong>{selected?.name || "Getting started"}</strong>
           </div>
@@ -393,10 +393,10 @@ export default function App() {
               <h1>
                 {
                   {
-                    timeline: "Reconstruct the story.",
-                    evidence: "Preserve the evidence.",
-                    gaps: "Know what is missing.",
-                    verify: "Make every finding verifiable.",
+                    timeline: "Investigation timeline",
+                    evidence: "Evidence vault",
+                    gaps: "Parsing gaps & review",
+                    verify: "Verify evidence & export",
                   }[tab]
                 }
               </h1>
@@ -404,7 +404,7 @@ export default function App() {
                 {
                   {
                     timeline:
-                      "A clear chronology. Original records. Assumptions in plain sight.",
+                      "Review events in corrected UTC order. Open a record to inspect its source and time assumptions.",
                     evidence:
                       "Original files, preserved byte for byte, with a SHA-256 fingerprint.",
                     gaps: "Review parsing failures and conflicting observations before drawing conclusions.",
@@ -449,12 +449,8 @@ export default function App() {
               <div className="welcome-icon">
                 <FolderPlus size={40} />
               </div>
-              <p className="eyebrow">A DEFENSIBLE TIMELINE STARTS HERE</p>
-              <h2>
-                Every incident has a story.
-                <br />
-                Build yours on evidence.
-              </h2>
+              <p className="eyebrow">LOCAL INVESTIGATION WORKSPACE</p>
+              <h2>Start an evidence-based investigation</h2>
               <p>
                 Create an investigation, import Linux or web server logs, and
                 follow each event back to its original source.
@@ -510,7 +506,7 @@ export default function App() {
                   </span>
                 </div>
                 <div className="stat">
-                  <span className="stat-icon lavender">
+                  <span className="stat-icon amber">
                     <Clock3 size={20} />
                   </span>
                   <div>
@@ -527,26 +523,23 @@ export default function App() {
                   </span>
                 </div>
               </section>
-              <div className="workflow">
-                <span>
-                  <CheckCheck size={16} /> PRESERVE
+              <div className="workflow" aria-label="Investigation workflow">
+                <span>1. Create investigation</span>
+                <span className={tab === "evidence" ? "current" : ""}>
+                  2. Import evidence
                 </span>
-                <i />
-                <span>
-                  <Clock3 size={16} /> CALIBRATE
+                <span>3. Review clocks</span>
+                <span
+                  className={
+                    tab === "timeline" || tab === "gaps" ? "current" : ""
+                  }
+                >
+                  4. Investigate timeline
                 </span>
-                <i />
-                <span className="current">
-                  <Activity size={16} /> RECONSTRUCT
+                <span className={tab === "verify" ? "current" : ""}>
+                  5. Verify evidence
                 </span>
-                <i />
-                <span>
-                  <ShieldQuestion size={16} /> CHALLENGE
-                </span>
-                <i />
-                <span>
-                  <Fingerprint size={16} /> VERIFY
-                </span>
+                <span>6. Export report</span>
               </div>
               {tab === "timeline" && (
                 <section className="card timeline-card">
@@ -977,7 +970,7 @@ export default function App() {
                             className={
                               c.status === "verified"
                                 ? "tag good"
-                                : "tag warning"
+                                : "tag critical"
                             }
                           >
                             {c.status}
@@ -1060,6 +1053,34 @@ export default function App() {
               </div>
             </>
           )}
+          <footer className="project-credits">
+            <p>
+              Developed by Anurag Deb and Sangram Keshari Patra
+              <br />
+              Mentored by Prof. Partha Chakraborty
+            </p>
+            <details>
+              <summary>Team roles & project information</summary>
+              <p>
+                <a href="https://www.linkedin.com/in/debanurag">Anurag Deb</a> —
+                Team Lead &amp; Full-Stack Developer
+                <br />
+                <a href="https://www.linkedin.com/in/sangramkpatra/">
+                  Sangram Keshari Patra
+                </a>{" "}
+                — Backend Developer
+                <br />
+                <a href="https://www.linkedin.com/in/partha-chakraborty-bb506638/">
+                  Prof. Partha Chakraborty
+                </a>{" "}
+                — Faculty Mentor
+              </p>
+              <p>
+                Team EXPOSE · A3-PS013-TC452 · AIORI Hackathon 3<br />
+                Independent hackathon project; no government affiliation.
+              </p>
+            </details>
+          </footer>
         </main>
       </div>
       {creating && (
@@ -1311,7 +1332,7 @@ export default function App() {
               className={
                 detail.integrity?.status === "verified"
                   ? "tag good"
-                  : "tag warning"
+                  : "tag critical"
               }
             >
               {detail.integrity?.status === "verified"

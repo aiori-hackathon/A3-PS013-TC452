@@ -10,11 +10,11 @@ A working local prototype for small IT teams: create an investigation, import lo
 
 ## Quick start (Windows PowerShell)
 
-From the repository root, with Python 3.12 and Node.js 22 installed:
+From the repository root, with Python 3.12 and Node.js 22 installed. The launch script was verified with **Windows PowerShell 5.1**; PowerShell 7 / `pwsh` is not required. Dependencies are already installed in this working checkout; run setup only on a fresh installation.
 
 ```powershell
-pwsh -NoProfile -File scripts/setup.ps1
-pwsh -NoProfile -File scripts/start.ps1
+powershell.exe -NoProfile -File scripts/setup.ps1
+powershell.exe -NoProfile -File scripts/start.ps1
 ```
 
 Open **http://127.0.0.1:5173**. API health: http://127.0.0.1:8000/api/health. API contract: http://127.0.0.1:8000/api/openapi.json. Services bind to `127.0.0.1` only. The start script opens hidden background processes and records PIDs and logs under `.alibi/`; it does not replace an existing listener on either port. Existing listeners must be identified if startup reports a collision.
@@ -25,10 +25,11 @@ To run in two visible terminals and stop with Ctrl+C:
 
 ```powershell
 # Terminal 1, repository root
+Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452'
 .\.venv\Scripts\python.exe -m uvicorn alibi.main:app --app-dir src/backend --host 127.0.0.1 --port 8000
 
 # Terminal 2, repository root
-Set-Location src/frontend
+Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452/src/frontend'
 node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173
 ```
 
@@ -51,7 +52,8 @@ Optional anchor calibration is under **Evidence vault → Correct clock**. It re
 
 ```powershell
 # Backend unit/API/acceptance tests
-.\.venv\Scripts\python.exe -m pytest -q
+$testDirectory = ".alibi/tests-$([guid]::NewGuid().ToString('N'))"
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp $testDirectory
 
 # Recreate the six synthetic evidence files; independent truth remains unchanged
 .\.venv\Scripts\python.exe scripts/generate_datasets.py
@@ -73,7 +75,7 @@ Set-Location ../..
 .\.venv\Scripts\python.exe scripts/triage_evaluation.py compare
 ```
 
-Browser smoke uses a fresh headless Chrome session. Set `ALIBI_BROWSER_CHANNEL=msedge` to use installed Edge instead. It creates labeled synthetic investigations, checks form submission, upload, search/filter, provenance, manual correction, hash verification, PDF download, responsive layout and reviewed anchor calibration. Screenshots are in `output/browser/`.
+Browser smoke uses a fresh headless Chrome session. Set `$env:ALIBI_BROWSER_CHANNEL = 'msedge'` to use installed Edge instead. It creates labeled synthetic investigations, checks form submission, upload, search/filter, provenance, manual correction, hash verification, PDF/JSON downloads, five gaps plus two review findings, and reviewed anchor calibration. It checks 1440px desktop, 768px tablet and 390px mobile layouts. Screenshots and the result JSON are in `output/browser/`.
 
 | Required scenario | Normalized | Parsing gaps | Coverage |
 | --- | ---: | ---: | --- |
@@ -81,7 +83,9 @@ Browser smoke uses a fresh headless Chrome session. Set `ALIBI_BROWSER_CHANNEL=m
 | B / cross-source reconstruction | 6 | 0 | Alternating web/auth observations; explicit -04:00 conversion; shared IP is not causation |
 | C / gaps and conflicts | 3 | 5 | Bad date, unsupported/missing fields, blank line, invalid UTF-8, reversed order and differing statuses for reused ID |
 
-`datasets/ground_truth.json` is hand-authored separately from the parsers and fixture generator. Automated acceptance asserts corrected times against it, byte preservation, hashes, tamper detection, ordering, gap accounting and exports. See [validation results](docs/VALIDATION.md), [human evaluation protocol](docs/EVALUATION.md) and [five-minute demo](docs/DEMO.md).
+`datasets/ground_truth.json` is hand-authored separately from the parsers and fixture generator. Automated acceptance asserts corrected times against it, byte preservation, hashes, tamper detection, ordering, gap accounting and exports. See [validation results](docs/VALIDATION.md), [two-person human evaluation](docs/EVALUATION_PILOT.md) and [five-minute demonstration handoff](DEMO_READY.md).
+
+Release checks on 31 October 2026: **30 Pytest tests passed**, TypeScript and Vite build passed, three HTTP scenarios passed, and browser smoke passed without console errors. Human triage evaluation remains pending. The PDF now presents identification, overview, integrity, chronology, clock assumptions, gaps and limitations; complete audit details remain in the lossless JSON export. See the validation record for scope and known warning.
 
 ## Project structure
 
@@ -113,6 +117,16 @@ Keep the database and vault together. Close the backend before copying `.alibi/`
 
 [Original proposal](ALIBI_AIORI3_Proposal.pdf) · [Original PS-013](docs/PS-013.pdf) · [Preserved original README](docs/ORIGINAL_README.md) · [Architecture and API](docs/ARCHITECTURE.md) · [Introduction video](https://youtu.be/RhR5dDCjA2M)
 
-Team: Anurag Deb (lead/full-stack), Sangram Keshari Patra (backend), Prof. Partha Chakraborty (mentor).
+Developed by Anurag Deb and Sangram Keshari Patra
+
+Mentored by Prof. Partha Chakraborty
+
+| Contributor | Role | Profile |
+| --- | --- | --- |
+| Anurag Deb | Team Lead & Full-Stack Developer | [LinkedIn](https://www.linkedin.com/in/debanurag) |
+| Sangram Keshari Patra | Backend Developer | [LinkedIn](https://www.linkedin.com/in/sangramkpatra/) |
+| Prof. Partha Chakraborty | Faculty Mentor | [LinkedIn](https://www.linkedin.com/in/partha-chakraborty-bb506638/) |
+
+ALIBI is an independent Team EXPOSE project and does not imply government affiliation.
 
 Local development branch: `codex/alibi-prototype`. Existing Git history and documents are preserved. No changes have been pushed to GitHub.

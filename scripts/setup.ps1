@@ -19,4 +19,4 @@ try {
     & $nodeExe $npmCli run build
     if ($LASTEXITCODE) { throw 'Frontend build failed.' }
 } finally { Pop-Location }
-Write-Host 'Setup complete. Run: pwsh -File scripts/start.ps1'
+Write-Host 'Setup complete. Run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/start.ps1'

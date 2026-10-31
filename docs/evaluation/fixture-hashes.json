@@ -1,0 +1,14 @@
+{
+  "C_gaps_conflicts": {
+    "web.log": "9b5037c48712972989d296445b76594abf33f40ee25838fb3b988c1383696cc1",
+    "auth.log": "78328ebbc3b60bdb39730732ae12f48b58bbed069495ea29fd4a099deef6bb9e"
+  },
+  "B_cross_source": {
+    "web.log": "a178d815b69da2daa6e58a4738403252bf05f9886b3471b29badf1936350c909",
+    "auth.log": "79595659c8c3cbf923563fae4728537c566cadd52e6a08ea76ec7924f6b08c74"
+  },
+  "A_conflicting_clocks": {
+    "web.log": "a40564cdace866f967e42280cbc885c7234e31e96b8fc96189f5214562139bd1",
+    "auth.log": "b73906884dd04d930a7938d8afb69d1e741f0fe65caf2ab3220d391378f6fcac"
+  }
+}

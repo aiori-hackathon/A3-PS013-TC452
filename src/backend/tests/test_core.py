@@ -155,3 +155,27 @@ def test_explicit_timezone_overrides_assumption():
 def test_pdf_untrusted_markup(client, case):
     upload(client, case, content=b'Oct 28 04:42:54 host sshd: <script>& malicious <b>tag\n')
     assert client.get(f'/api/investigations/{case}/report.pdf').status_code == 200
+
+
+def test_pdf_readable_summary_preserves_json_audit(client, case):
+    item = upload(client, case).json()
+    prefix = f'/api/investigations/{case}'
+    before = client.get(prefix + '/report.json').json()
+    rendered = client.get(prefix + '/report.pdf')
+    assert rendered.status_code == 200
+    text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(rendered.content)).pages)
+    for heading in ('1. Investigation identification', '2. Investigation overview',
+                    '3. Evidence integrity summary', '4. Chronology',
+                    '5. Clock corrections', '6. Parsing gaps',
+                    '7. Evidence references and limitations'):
+        assert heading in text
+    assert item['sha256'] in text
+    assert 'full history in JSON' in text
+    assert '"investigation_id":' not in text
+    assert before['audit'] == client.get(prefix + '/report.json').json()['audit']
+    path = client.app.state.store.vault / item['id']
+    path.chmod(0o666)
+    path.write_bytes(b'altered fixture')
+    failed_pdf = client.get(prefix + '/report.pdf')
+    failed_text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(failed_pdf.content)).pages)
+    assert 'MISMATCH' in failed_text and '1 failed or unavailable' in failed_text
