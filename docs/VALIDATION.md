@@ -4,7 +4,7 @@ Revalidated locally on Windows with Python 3.12.14, Node.js 22.14.0 and Windows 
 
 | Check | Result |
 | --- | --- |
-| Pytest unit/API/acceptance suite | **30 passed in 7.04s**; one third-party Starlette/AnyIO deprecation warning |
+| Pytest unit/API/acceptance suite | **30 passed**; submission recheck: **4.88s** (earlier release run: 7.04s); one third-party Starlette/AnyIO deprecation warning |
 | TypeScript check and Vite production build | **Passed** |
 | Real HTTP smoke across scenarios A/B/C | **3 passed**, 15 normalized events, five retained gaps |
 | Browser smoke using installed Chrome | **Passed**, zero JavaScript/console errors |
@@ -19,7 +19,7 @@ Revalidated locally on Windows with Python 3.12.14, Node.js 22.14.0 and Windows 
 | Proposal preservation | Bytes match `ba55f33:ALIBI_AIORI3_Proposal.pdf` |
 | Original README preservation | `docs/ORIGINAL_README.md` matches `ba55f33:README.md`, allowing only Git newline normalization |
 | Original PS-013 preservation | Bytes match checkpoint `bedcf0d:docs/PS-013.pdf` |
-| Human manual/assisted comparison | **Pending**; no measurements or speedup claim |
+| Human manual/assisted comparison | [One-person exploratory pilot recorded](EVALUATION.md); broader counterbalanced study pending; no general speedup claim |
 
 The backend suite covers all three independent ground-truth fixtures, original-byte downloads, line/byte provenance, SHA-256 tampering and missing files, non-accumulating manual offsets, supplied intervals, timezone conversion, DST ambiguity/nonexistence, missing years, malformed dates/records, SQL-literal search, paging, persistence after reopening SQLite, cross-investigation isolation, upload limits/path traversal and cross-origin rejection. Calibration tests cover minimum anchors, span, residual rejection, duplicate IDs, explicit approval, stale references and tampered evidence.
 
@@ -47,7 +47,7 @@ Set-Location ../..
 .\.venv\Scripts\python.exe scripts/triage_evaluation.py compare
 ~~~
 
-The human comparison command currently prints **PENDING**. Use [the two-person pilot](EVALUATION_PILOT.md) to collect actual measurements. No human speedup is claimed.
+The existing timer-harness comparison still prints **PENDING** because its broader trials have not been performed. The narrower participant-reported exploratory task is recorded separately in [EVALUATION.md](EVALUATION.md); no harness rows were manufactured. External data measurements and reproducible commands are in [EXTERNAL_VALIDATION.md](EXTERNAL_VALIDATION.md).
 
 ## PS-013 acceptance mapping
 
@@ -60,7 +60,7 @@ The human comparison command currently prints **PENDING**. Use [the two-person p
 | Searchable chronological timeline | Search/source/type/date filters, paging, corrected UTC sort | Implemented, browser tested |
 | Document parsing gaps | Every failed record retained with raw preview and exact byte range | Implemented, tested |
 | Three synthetic scenarios | A/B/C fixtures and separate expected outputs | Implemented, tested |
-| Assisted vs manual triage | Real-human timer, scoring and paired comparison protocol | **Human runs pending** |
+| Assisted vs manual triage | Exploratory three-event observation plus broader timer/protocol | Exploratory result recorded; controlled comparison pending |
 | Incident summary report | PDF, full JSON, SHA-256 manifest and audit | Implemented, tested |
 | Exclusions | No endpoint takeover, malware removal, forensic certification | Respected |
 

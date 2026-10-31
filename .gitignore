@@ -55,6 +55,11 @@ cover/
 
 # Environments
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
 .venv
 env/
 venv/

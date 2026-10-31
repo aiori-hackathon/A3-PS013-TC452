@@ -1,125 +1,181 @@
-# ALIBI — Evidence-First Incident Reconstruction
+<div align="center">
 
-**Team EXPOSE · A3-PS013-TC452 · AIORI Hackathon 3 · PS-013**
+# ALIBI.
 
-A working local prototype for small IT teams: create an investigation, import logs, preserve original evidence, normalize timestamps, reconstruct a timeline, inspect gaps, and export a verifiable report.
+**Evidence-First Cybersecurity Incident Reconstruction**
 
-**Implemented and tested:** React + Vite + TypeScript frontend, Python 3.12 + FastAPI + Pydantic backend, SQLite persistence, two log families, SHA-256 verification, explicit clock correction, searchable timeline, gap ledger, PDF/JSON/manifest exports and reviewed anchor calibration. No cloud services or AI APIs are required.
+Every incident has a story.<br>
+Every story needs an ALIBI.
 
-**Still pending:** real human manual-versus-assisted triage measurements. A reproducible protocol and timer/scoring harness are provided; no human times or speedup claims are fabricated.
+**Team EXPOSE · A3-PS013-TC452**<br>
+AIORI Hackathon 3 | PS-013
 
-## Quick start (Windows PowerShell)
+![Python](https://img.shields.io/badge/Python-3.12-123B68)
+![FastAPI](https://img.shields.io/badge/FastAPI-backend-205A91)
+![React](https://img.shields.io/badge/React-frontend-123B68)
+![TypeScript](https://img.shields.io/badge/TypeScript-typed-205A91)
+![SQLite](https://img.shields.io/badge/SQLite-local-123B68)
+![Offline-first](https://img.shields.io/badge/Offline--first-local_processing-205A91)
 
-From the repository root, with Python 3.12 and Node.js 22 installed. The launch script was verified with **Windows PowerShell 5.1**; PowerShell 7 / `pwsh` is not required. Dependencies are already installed in this working checkout; run setup only on a fresh installation.
+**[Project introduction](https://youtu.be/RhR5dDCjA2M) · [Project proposal](ALIBI_AIORI3_Proposal.pdf) · [Live demo guide](DEMO_READY.md)**
 
-```powershell
+Full demonstration: **`DEMO_VIDEO_URL_TO_BE_ADDED`**
+
+<!-- FINAL DEMONSTRATION THUMBNAIL: insert the approved video thumbnail and URL here. -->
+
+</div>
+
+## The problem
+
+A small IT team investigating an incident may find web requests on one server and authentication records on another. Their formats differ, one source uses local time, and another clock is slow. A login at 10:14 in one file can appear unrelated to an event at 04:42 elsewhere. Manually aligning these records takes time, invites arithmetic errors and can obscure gaps. Investigators also need unchanged originals and traceable references, often without specialist infrastructure or a dedicated forensic team.
+
+## The ALIBI solution
+
+ALIBI is an implemented local investigation workbench. A React interface connects to a Python/FastAPI backend and SQLite storage. It preserves imported files, records explicit time assumptions and builds a searchable chronology that investigators can inspect against original evidence. Processing requires no paid API, cloud database or external AI service.
+
+The five-stage framework keeps each decision reviewable. **PRESERVE** retains original bytes and hashes. **CALIBRATE** normalizes UTC and records supported corrections. **RECONSTRUCT** orders observations. **CHALLENGE** exposes parsing failures and conflicting records. **VERIFY** checks integrity and exports findings with their limitations.
+
+~~~mermaid
+flowchart LR
+    A[Import] --> B[Preserve]
+    B --> C[Normalize]
+    C --> D[Correct clocks]
+    D --> E[Reconstruct]
+    E --> F[Review gaps]
+    F --> G[Verify]
+    G --> H[Export]
+~~~
+
+Create an investigation, import each source separately and review its timezone and year assumptions. A positive correction adds time to a slow clock. Original timestamps, normalized UTC and corrected timestamps remain distinct. Shared identifiers and nearby times support inspection; they do not establish actor identity or causation.
+
+## Product preview
+
+These are real captures of ALIBI using the included synthetic scenarios, not mockups. The timeline keeps chronology central; source inspection exposes the evidence behind a row. Reports summarize findings while the JSON export retains complete audit details.
+
+<table>
+<tr><th>Investigation timeline</th><th>Evidence vault</th></tr>
+<tr><td><a href="docs/assets/timeline.png"><img src="docs/assets/timeline.png" alt="ALIBI searchable investigation timeline" width="100%"></a></td><td><a href="docs/assets/evidence-vault.png"><img src="docs/assets/evidence-vault.png" alt="Preserved originals, hashes and clock corrections" width="100%"></a></td></tr>
+<tr><th>Original record inspection</th><th>Incident report</th></tr>
+<tr><td><a href="docs/assets/source-record.png"><img src="docs/assets/source-record.png" alt="Original and corrected timestamps with source provenance" width="100%"></a></td><td align="center"><a href="docs/assets/report.png"><img src="docs/assets/report.png" alt="Actual generated incident PDF showing integrity and chronology" height="350"></a></td></tr>
+</table>
+
+## Verified capabilities
+
+| Capability | Implemented behavior |
+| --- | --- |
+| Linux auth/syslog | Traditional yearless and supported ISO-timestamp records |
+| Apache/Nginx access | Common/combined access logs |
+| Original evidence | Byte-preserving storage, raw lines and line/byte provenance |
+| SHA-256 | Intake hashes, fresh verification and independent manifests |
+| Time processing | Explicit timezone/year assumptions and UTC normalization |
+| Manual correction | Absolute offsets, reasons and supplied uncertainty bounds |
+| Reviewed anchors | Constant-offset proposals with sufficient same-event anchors and explicit approval |
+| Searchable chronology | Text, source, type and date filters with pagination |
+| Parsing-gap ledger | Failed records retained; deterministic conflicts flagged for review |
+| Synthetic validation | Three scenarios with separate ground-truth fixtures |
+| Reports | Readable PDF, lossless JSON and SHA-256 manifest |
+| Local operation | SQLite and loopback services; offline processing after dependency installation |
+
+Unsupported records become visible gaps instead of disappearing. Imports are limited to 10 MiB and 50,000 records per file. Yearless records require a supplied year; ambiguous daylight-saving timestamps are rejected rather than guessed. Reviewed anchor calibration requires justified same-event correspondence, not merely matching strings.
+
+## Validation and benchmarks
+
+The latest release validation on **31 October 2026** passed **30 backend tests**, TypeScript validation, the Vite production build and browser smoke. Browser checks covered 1440px, 768px and 390px layouts without console errors. All six synthetic originals passed independent manifest verification, and isolated tests detected tampering. These checks verify the documented workflow; they are not production-security certification.
+
+| Synthetic scenario | Normalized events | Retained gaps | Focus |
+| --- | ---: | ---: | --- |
+| A — conflicting clocks | 6 | 0 | +05:30 timezone and +73-second correction |
+| B — cross-source reconstruction | 6 | 0 | Alternating web/auth observations, explicit -04:00 |
+| C — gaps and conflicts | 3 | 5 | Invalid date, unsupported records, blank line and bad encoding |
+| Total | **15** | **5** | Independent ground truth and reproducible fixtures |
+
+### Independently published data
+
+An unchanged 1,000-record prefix of Elastic's published NGINX sample passed through the existing pipeline. Three fresh-investigation imports used the same running backend; warm caches may influence timings. The original download, selected prefix and exported originals were hashed and checked. No parser changes were made for this benchmark.
+
+| External benchmark | Measured result |
+| --- | ---: |
+| Input / normalized / gaps | **1,000 / 1,000 / 0** per run |
+| Parsing coverage | **100% of the selected prefix** |
+| Median import and processing | **0.169648 seconds** |
+| Median throughput | **5,894.55 records/second** |
+| Median timeline search latency | **24.171 ms** |
+| SHA-256 verification | **Passed in all three runs** |
+| PDF generation | **5.598301 seconds**, one measurement |
+
+Parsing coverage measures accepted records, not incident-detection accuracy. The prefix is reproducible but not representative of every log source. Processing time is not human investigation time. [Dataset attribution, exact selection, commands and full results →](docs/EXTERNAL_VALIDATION.md)
+
+### Exploratory human pilot
+
+Anurag Deb completed a narrow three-auth-event timestamp task manually, then with ALIBI. Both methods identified all three events. The manual calculation mistakenly added 77 rather than the supplied 73 seconds, making each answer four seconds late.
+
+| Measure | Manual | ALIBI-assisted |
+| --- | ---: | ---: |
+| Recorded elapsed time | **62.000 s** | **26.029 s** |
+| Events identified | **3/3** | **3/3** |
+| Exact timed timestamp accuracy | **0/3** | **3/3** |
+
+The observed ratio was **2.38x**, with **35.971 seconds** saved and approximately **58.0%** less time in this task. This is not a general speedup claim: one developer performed sequential trials, and correct answers were known before assisted timing. Learning and familiarity bias are substantial. Final reviewed timestamps are correct for all three events; the original manual errors remain recorded. [Method, observations and limitations →](docs/EVALUATION.md)
+
+## Quick start
+
+Use **Python 3.12**, **Node.js 22** and Windows PowerShell **5.1 or later**. From the repository root, install dependencies once; internet is needed for installation. The application itself processes evidence locally. Start the services in two terminals so stopping them is straightforward.
+
+~~~powershell
+# One-time setup, repository root
 powershell.exe -NoProfile -File scripts/setup.ps1
-powershell.exe -NoProfile -File scripts/start.ps1
-```
 
-Open **http://127.0.0.1:5173**. API health: http://127.0.0.1:8000/api/health. API contract: http://127.0.0.1:8000/api/openapi.json. Services bind to `127.0.0.1` only. The start script opens hidden background processes and records PIDs and logs under `.alibi/`; it does not replace an existing listener on either port. Existing listeners must be identified if startup reports a collision.
-
-On the build machine, Python was not on PATH and the default npm shim was broken. The verified setup uses bundled Python 3.12.14 and npm next to `D:\node.js\node.exe`; the setup script detects these. After setup, the virtual environment and local Node dependencies are sufficient. Dependency installation needs internet; the application works offline.
-
-To run in two visible terminals and stop with Ctrl+C:
-
-```powershell
-# Terminal 1, repository root
-Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452'
+# Terminal 1: backend
 .\.venv\Scripts\python.exe -m uvicorn alibi.main:app --app-dir src/backend --host 127.0.0.1 --port 8000
+~~~
 
-# Terminal 2, repository root
-Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452/src/frontend'
+~~~powershell
+# Terminal 2: frontend, starting from repository root
+Set-Location src/frontend
 node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173
-```
+~~~
 
-On macOS/Linux, create `.venv` with `python3.12 -m venv .venv`, install `src/backend/requirements-lock.txt`, run `npm ci` in `src/frontend`, and use `.venv/bin/python` for the backend command. Windows is the verified platform; these Unix commands are provided for portability and were not executed here.
+Open **http://127.0.0.1:5173**. Health: http://127.0.0.1:8000/api/health. **Stop:** press `Ctrl+C` in each service terminal. For background startup and presentation fallbacks, see the demo guide.
 
-## Use the workbench
-
-1. **Create investigation.** Give it a name and scope.
-2. **Import evidence.** Drag/drop or browse. Select a source label, parser, explicit timezone and year when required. Import different source clocks separately. Limits: 10 MiB and 50,000 records per file.
-3. **Preserve and calibrate.** Review the SHA-256 and counts in Evidence vault. Correct a slow clock with a positive offset; corrections are absolute, not cumulative. Record the supporting reason. Original bytes and normalized UTC remain unchanged.
-4. **Reconstruct.** Search messages/IPs/IDs; filter source, event type and UTC range. Inspect original, UTC and corrected times, supplied intervals, line number, byte range and verified original record.
-5. **Challenge.** Review every unparsed line and observed identifier/status or source-order conflict. Silence and parsing failures are not evidence of malicious activity.
-6. **Verify and export.** Recalculate file hashes. Download PDF, lossless JSON and the SHA-256 manifest. Audit history records intake, clock changes, proposals and verification.
-
-Traditional syslog without a year needs an explicit year. Timezone-free timestamps need an explicit timezone assumption; the visible default is UTC. Ambiguous/nonexistent DST times are rejected as gaps. Explicit offsets in web logs override timezone assumptions. No timestamp, New Year rollover, clock offset or causal link is invented.
-
-Optional anchor calibration is under **Evidence vault → Correct clock**. It requires at least three unique same-event anchors across distinct sources, a >=60-second span, small residuals, an investigator-provided semantic basis and explicit approval. Shared IDs alone do not prove same-event identity. Stale proposals and tampered anchors are rejected. This is a constant-offset model, not drift estimation or a causal graph.
-
-## Reproducible validation
-
-```powershell
-# Backend unit/API/acceptance tests
+~~~powershell
+# Tests, repository root
 $testDirectory = ".alibi/tests-$([guid]::NewGuid().ToString('N'))"
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp $testDirectory
-
-# Recreate the six synthetic evidence files; independent truth remains unchanged
-.\.venv\Scripts\python.exe scripts/generate_datasets.py
-
-# With both services running: import all three cases and export reports
 .\.venv\Scripts\python.exe scripts/smoke.py
+~~~
 
-# Production build (works even with the machine's broken npm shim)
-Set-Location src/frontend
-node node_modules/typescript/bin/tsc --noEmit
-node node_modules/vite/bin/vite.js build
-
-# Browser smoke; installed Chrome required by default
-node smoke.mjs
-Set-Location ../..
-
-# Independent manifest verification and pending human benchmark status
-.\.venv\Scripts\python.exe scripts/verify_manifest.py output/json/C_gaps_conflicts-manifest.json
-.\.venv\Scripts\python.exe scripts/triage_evaluation.py compare
-```
-
-Browser smoke uses a fresh headless Chrome session. Set `$env:ALIBI_BROWSER_CHANNEL = 'msedge'` to use installed Edge instead. It creates labeled synthetic investigations, checks form submission, upload, search/filter, provenance, manual correction, hash verification, PDF/JSON downloads, five gaps plus two review findings, and reviewed anchor calibration. It checks 1440px desktop, 768px tablet and 390px mobile layouts. Screenshots and the result JSON are in `output/browser/`.
-
-| Required scenario | Normalized | Parsing gaps | Coverage |
-| --- | ---: | ---: | --- |
-| A / conflicting clocks and timezones | 6 | 0 | +05:30 access timestamps; explicit 2026 UTC syslog; +73-second host correction |
-| B / cross-source reconstruction | 6 | 0 | Alternating web/auth observations; explicit -04:00 conversion; shared IP is not causation |
-| C / gaps and conflicts | 3 | 5 | Bad date, unsupported/missing fields, blank line, invalid UTF-8, reversed order and differing statuses for reused ID |
-
-`datasets/ground_truth.json` is hand-authored separately from the parsers and fixture generator. Automated acceptance asserts corrected times against it, byte preservation, hashes, tamper detection, ordering, gap accounting and exports. See [validation results](docs/VALIDATION.md), [two-person human evaluation](docs/EVALUATION_PILOT.md) and [five-minute demonstration handoff](DEMO_READY.md).
-
-Release checks on 31 October 2026: **30 Pytest tests passed**, TypeScript and Vite build passed, three HTTP scenarios passed, and browser smoke passed without console errors. Human triage evaluation remains pending. The PDF now presents identification, overview, integrity, chronology, clock assumptions, gaps and limitations; complete audit details remain in the lossless JSON export. See the validation record for scope and known warning.
+The smoke command needs both services and creates labeled synthetic investigations. Keep services on loopback: this prototype has no authentication or production hardening. PDF uses a Latin-1 font; JSON and original downloads preserve full content. No complete causal graph, clock-drift estimation or statistical uncertainty model is claimed.
 
 ## Project structure
 
-```text
-src/backend/alibi/       API, schemas, SQLite, parsers, calibration, reporting
-src/backend/tests/       Pytest unit/API/acceptance tests
-src/frontend/            React workbench, production build and browser smoke
-datasets/                Six reproducible synthetic logs + independent ground truth
-scripts/                 Setup/start, generator, HTTP smoke, human timer, verifier
-docs/                    Architecture, API contract, demo, validation, preserved docs
-.alibi/                  Local evidence vault, SQLite database, service logs (ignored)
-output/                  Generated reports, screenshots and evaluations (ignored)
-```
+~~~text
+src/backend/    FastAPI, SQLite, parsers, calibration, reports and tests
+src/frontend/   React workbench, Vite build and browser smoke
+datasets/       Three synthetic scenarios and independent ground truth
+scripts/        Setup, startup, verification and benchmark tools
+docs/           Architecture, validation, evaluation and product captures
+~~~
 
-Keep the database and vault together. Close the backend before copying `.alibi/` for backup. All original evidence is local and unencrypted. `ALIBI_DATA_DIR` can point the backend to a different data directory.
+Generated `output/`, the local evidence/database directory `.alibi/`, virtual environments and caches are ignored by Git. External raw logs remain local; only measurement metadata and reproducible tooling are included. Keep the database and evidence vault together when backing up a stopped application.
 
-## Known limitations and exclusions
+## Documentation
 
-- Only the documented Linux syslog/auth and common/combined web access formats are supported. Other formats become visible gaps; no CSV/JSON or structured RFC5424 adapter is implemented.
-- No forensic certification, endpoint takeover, malware removal, threat detection, digital signatures or pre-intake authenticity guarantee. Read-only files and hashes are not tamper-proof storage or legal chain of custody.
-- Single-investigator local prototype, no authentication, encryption, multi-user authorization, schema migration system or production hardening. Never expose the ports to a network.
-- Yearless files spanning New Year must be split with documented assumptions. Timezone/year corrections require a new import; the original import remains available.
-- Supplied uncertainty and anchor bounds are assumptions, not statistical confidence intervals. No full partial-order graph, clock drift model or proof of missing unseen events is implemented. The visible-page overlap indicator is limited to adjacent events in the current filter.
-- Search uses SQLite literal substring matching rather than FTS5. Large investigations/export generation are synchronous and have not been load-tested. Atomic database transactions do not make file/database writes one atomic operation; interrupted intake can leave unindexed vault files.
-- PDF uses a Latin-1 font and substitutes unsupported characters with `?`; gap previews are limited to 1,000 characters. JSON, source-byte inspection and original downloads preserve the full content. Interactive API docs use default CDN assets; the OpenAPI JSON and application remain offline-capable.
-- The human triage benchmark is pending. Automated runtimes are not human performance results.
+| Resource | Link |
+| --- | --- |
+| Original proposal | [ALIBI proposal](ALIBI_AIORI3_Proposal.pdf) |
+| Original PS-013 statement | [Problem statement](docs/PS-013.pdf) |
+| Architecture and boundaries | [Architecture](docs/ARCHITECTURE.md) |
+| Automated release checks | [Validation](docs/VALIDATION.md) |
+| External dataset benchmark | [External validation](docs/EXTERNAL_VALIDATION.md) |
+| Human observations and methodology | [Evaluation](docs/EVALUATION.md) |
+| Five-minute presentation | [Demonstration guide](DEMO_READY.md) |
 
-## Project references
+## Team and credits
 
-[Original proposal](ALIBI_AIORI3_Proposal.pdf) · [Original PS-013](docs/PS-013.pdf) · [Preserved original README](docs/ORIGINAL_README.md) · [Architecture and API](docs/ARCHITECTURE.md) · [Introduction video](https://youtu.be/RhR5dDCjA2M)
-
-Developed by Anurag Deb and Sangram Keshari Patra
-
+Developed by Anurag Deb and Sangram Keshari Patra<br>
 Mentored by Prof. Partha Chakraborty
+
+**TEAM EXPOSE · A3-PS013-TC452**
 
 | Contributor | Role | Profile |
 | --- | --- | --- |
@@ -127,6 +183,10 @@ Mentored by Prof. Partha Chakraborty
 | Sangram Keshari Patra | Backend Developer | [LinkedIn](https://www.linkedin.com/in/sangramkpatra/) |
 | Prof. Partha Chakraborty | Faculty Mentor | [LinkedIn](https://www.linkedin.com/in/partha-chakraborty-bb506638/) |
 
-ALIBI is an independent Team EXPOSE project and does not imply government affiliation.
+ALIBI is an independent Team EXPOSE project; it does not imply government affiliation.
 
-Local development branch: `codex/alibi-prototype`. Existing Git history and documents are preserved. No changes have been pushed to GitHub.
+**ALIBI · Team EXPOSE · AIORI Hackathon 3**
+
+*Evidence first. Assumptions last.*
+
+ALIBI is a local, offline-first incident investigation aid and does not claim forensic certification.

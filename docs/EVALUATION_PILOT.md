@@ -1,6 +1,6 @@
 # Two-person human triage pilot
 
-**PENDING.** No human timings have been supplied. Automated pipeline runtime is not investigator triage time.
+**Broader protocol pending.** The [completed exploratory observation](EVALUATION.md) covers a narrower three-event task and is not a completed trial of this protocol. Automated pipeline runtime is not investigator triage time.
 
 ## Prepare before timing
 

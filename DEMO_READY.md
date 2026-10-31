@@ -7,7 +7,7 @@ Team EXPOSE · A3-PS013-TC452 · AIORI Hackathon 3 · PS-013
 Dependencies already exist in this checkout. No PowerShell 7 is needed. From the repository root:
 
 ~~~powershell
-Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452'
+# Run from your ALIBI repository root
 powershell.exe -NoProfile -File scripts/start.ps1
 ~~~
 
@@ -17,13 +17,14 @@ Alternatively, use two visible terminals (Ctrl+C stops each):
 
 ~~~powershell
 # Terminal 1
-Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452'
+# Run from your ALIBI repository root
 .\.venv\Scripts\python.exe -m uvicorn alibi.main:app --app-dir src/backend --host 127.0.0.1 --port 8000
 ~~~
 
 ~~~powershell
 # Terminal 2
-Set-Location 'D:/HACKATHONS/AIORI 3/A3-PS013-TC452/src/frontend'
+# From the repository root
+Set-Location src/frontend
 node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173
 ~~~
 
@@ -71,7 +72,7 @@ Import files separately so each source has its own clock settings. Choose Apache
 
 Expected: two VERIFIED lines and exit code 0. Do not edit real vault files for a live tampering demonstration; automated tests use isolated synthetic copies and confirm a mismatch is detected.
 
-**4:15–5:00 — Validation and boundaries.** Show `docs/VALIDATION.md` and `output/smoke-results.json`. State: “30 automated tests pass; the three scenarios and browser workflow were checked. Human triage evaluation remains pending.” Show the ready-to-run [Anurag/Sangram pilot](docs/EVALUATION_PILOT.md). Explain local-only use, supported formats and no certification, drift estimation or causal graph. Close with the team credits.
+**4:15–5:00 — Validation and boundaries.** Show `docs/VALIDATION.md` and `output/smoke-results.json`. State: “30 automated tests pass; the three scenarios and browser workflow were checked. A one-person exploratory pilot is documented; the broader evaluation remains pending.” Show the ready-to-run [Anurag/Sangram pilot](docs/EVALUATION_PILOT.md). Explain local-only use, supported formats and no certification, drift estimation or causal graph. Close with the team credits.
 
 ## Emergency fallback
 
@@ -93,4 +94,4 @@ Sangram Keshari Patra — Backend Developer
 
 Prof. Partha Chakraborty — Faculty Mentor
 
-Human triage evaluation remains pending. See README and the validation record for implementation limitations.
+A one-person exploratory pilot is documented; the broader evaluation remains pending. See README and the validation record for implementation limitations.

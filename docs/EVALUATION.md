@@ -1,26 +1,46 @@
-# Manual versus assisted triage protocol
+# Exploratory human triage pilot
 
-**Release pilot:** Anurag and Sangram should follow [EVALUATION_PILOT.md](EVALUATION_PILOT.md), which specifies the two-person assignment, clock sheets, timing, answer template and reviewer key. The broader protocol below is retained for a later study with independent participants.
+## Method and provenance
 
-Status: **human measurements pending**. The automated smoke durations measure software processing and export only. They are not a manual baseline, investigator triage time, or evidence of a speedup. PS-013's human comparison remains open until real trials are recorded.
+This report records a genuine exploratory observation supplied by project participant **Anurag Deb**. It is a participant-reported result, not an independently witnessed or controlled trial. The task used `A_conflicting_clocks`: identify three authentication events and calculate their corrected UTC timestamps using a supplied **+73-second** correction.
 
-Use at least three participants who can read basic logs. Record participant pseudonyms, prior experience, machine/OS, tool versions, dataset hashes, trial order and interruptions in the study notes. Obtain consent for timing. Use synthetic data only.
+The manual condition occurred first. The ALIBI-assisted condition followed, after the correct timestamps were known. The original observations below are preserved, including the manual arithmetic error. No rows were manufactured in `output/human-trials.csv` or the existing interactive timer harness.
 
-1. Give each participant the two source files for one scenario, a clock sheet with the supplied timezone/year/offset assumptions, and the task below. Keep `datasets/ground_truth.json` hidden until scoring. Scenario A's host A clock is 73 seconds slow; all other supplied clocks have zero correction. Yearless records are from 2026 and use UTC. Explicit zones override assumptions.
-2. Manual condition: use a text editor, spreadsheet, clock calculator and local SHA-256 tool. Do not use ALIBI or its parser. Preserve originals separately.
-3. Assisted condition: use a fresh ALIBI investigation, import the same evidence with the same assumptions, inspect the timeline and gaps, verify hashes and export the report.
-4. Counterbalance condition order across participants and rotate A/B/C. A repeat on the same case produces familiarity bias; use a washout interval and report this limitation. Do not present an unpaired comparison as a within-participant result.
-5. Time from opening the source files through saving the answer and integrity/report deliverables. Record interruptions; keep all trials, including failures. Use the timer below. Do not substitute automated pipeline duration.
-6. Required task: list every successfully normalized record by `filename:line`, give corrected UTC timestamps, list unparsed lines and reasons, identify observable conflicts, verify each source SHA-256, and provide a short incident account separating observations from hypotheses. No causal claim is required. No unseen event can be inferred from silence.
-7. Save answer JSON with `times` (mapping from `filename:line` to UTC ISO timestamp with six fractional digits and `Z`) and `gap_count` (integer). Save the richer written findings, hashes, and report alongside it. The script scores timestamps and gap counts; a reviewer separately assesses provenance, assumptions, and unsupported claims.
-8. Report each trial's elapsed time and accuracy, then paired differences and medians. Flag incomplete tasks. Avoid general performance or statistical-significance claims from this small dataset.
+## Recorded observations
 
-From the repository root:
+| Measure | Manual investigation | ALIBI-assisted investigation |
+| --- | ---: | ---: |
+| Elapsed seconds | **62.000** | **26.029** |
+| Relevant events identified | **3/3** | **3/3** |
+| Exact timestamp accuracy during timed trial | **0/3** | **3/3** |
+| Correction actually applied | +77 seconds, by mistake | Supplied +73 seconds |
 
-```powershell
-.\.venv\Scripts\python.exe scripts/triage_evaluation.py trial --participant P01 --scenario A_conflicting_clocks --mode manual --answers output/P01-A-manual.json
-.\.venv\Scripts\python.exe scripts/triage_evaluation.py trial --participant P01 --scenario A_conflicting_clocks --mode assisted --answers output/P01-A-assisted.json
-.\.venv\Scripts\python.exe scripts/triage_evaluation.py compare
-```
+| Event | Original auth UTC | Original timed manual answer | Assisted answer | Final reviewed correct UTC |
+| --- | --- | --- | --- | --- |
+| R7 / auth.log:1 | 04:42:54 | **04:44:11** | 04:44:07 | **04:44:07** |
+| R8 / auth.log:2 | 04:43:54 | **04:45:11** | 04:45:07 | **04:45:07** |
+| R9 / auth.log:3 | 04:44:54 | **04:46:11** | 04:46:07 | **04:46:07** |
 
-The interactive timer waits for a real human to start and finish. The comparison command reports pending when no results exist. Results are local in `output/human-trials.csv`; never prefill invented observations.
+All dates are 28 October 2026, with UTC and year supplied for the yearless auth source. Each manual answer was four seconds late because the participant added 77 instead of 73 seconds. Final reviewed correctness is 3/3, but that review does **not** retrospectively change the manual timed score of 0/3.
+
+## Observed comparison
+
+- Time saved: `62.000 − 26.029 = 35.971 seconds`.
+- Observed time ratio: `62.000 / 26.029 = 2.382x`, approximately **2.38x**.
+- Observed reduction: `100 × 35.971 / 62.000 = 58.018%`, approximately **58.0%**.
+
+Both methods located all three relevant events. ALIBI applied the supplied correction correctly; the manual trial contained an arithmetic error. This specific observation illustrates the potential value of automatic timestamp correction in reducing manual arithmetic mistakes. It does **not** establish a general 2.38x productivity improvement.
+
+## Limitations
+
+One participant and one synthetic scenario were measured. Trials were sequential rather than randomized or counterbalanced. The participant helped develop ALIBI, the assisted condition followed the manual condition, and correct answers were already known before assisted timing. Learning and familiarity bias are therefore substantial. These results are neither statistically significant nor representative of independent investigators or real incidents.
+
+This narrow three-auth-event task is different from the complete six-event A investigation and the broader manual-versus-assisted protocol. It must not be inserted into that harness as if all its tasks, gap review, hashing and report deliverables had been completed. The broader two-person, three-scenario comparison remains pending.
+
+## Reproducible references
+
+- [Original synthetic auth evidence](../datasets/A_conflicting_clocks/auth.log) and [independent ground truth](../datasets/ground_truth.json).
+- [Scenario generator](../scripts/generate_datasets.py) and [interactive timer/scorer](../scripts/triage_evaluation.py).
+- [Broader counterbalanced protocol](EVALUATION_PILOT.md), [reviewer answer key](evaluation/ANSWER_KEY.md) and [fixture hashes](evaluation/fixture-hashes.json).
+
+The broader protocol and answer key are retained because they support reproducibility and distinguish completed exploratory observations from unperformed evaluation.
