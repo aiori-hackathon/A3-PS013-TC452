@@ -55,7 +55,7 @@ def test_scenarios_end_to_end(client, case, scenario):
     assert 'Chronology' in text and 'SHA-256' in text
     assert 'limitations' in text
     if scenario == 'C_gaps_conflicts':
-        assert {f['type'] for f in report['findings']} == {'conflicting_identifier', 'source_order_conflict'}
+        assert {f['type'] for f in report['findings'] if 'priority' not in f} == {'conflicting_identifier', 'source_order_conflict'}
 
 
 def test_tamper_detection(client, case):

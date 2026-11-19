@@ -54,6 +54,27 @@ All endpoints are under `/api`. The complete machine-readable contract is `docs/
 | GET / POST | `/investigations/{id}/calibration/proposals` | List / preview a supported clock model |
 | POST | `/investigations/{id}/calibration/proposals/{proposal_id}/approve` | Explicit approval with reason |
 | GET | `/investigations/{id}/report.json`, `/report.pdf`, `/manifest.json` | Exports with fresh integrity results |
+| GET | `/investigations/{id}/case.zip` | Complete case with verified originals. Returns HTTP 409 on an integrity failure. |
+
+## Investigative leads
+
+The findings endpoint retains its existing conflict entries and appends leads with priority, UTC range, optional source IP and clickable file/line references. Rules run over corrected timestamps each time the investigation is reviewed.
+
+- **High · SSH sequence.** Pair the latest unused failure with a later acceptance from the same valid IP within 300 seconds inclusive. Recognized sshd methods are password, publickey and keyboard-interactive (including PAM). Equal times do not establish ordering. Multiple failures before one success contribute one sequence. Shared IPs can span users and hosts.
+- **Informational · Cross-source activity.** Group web and auth records from different source labels with the same valid IP. Each group spans at most 600 seconds inclusive. Completed groups consume their window to avoid generating a finding for every pair. A shared source label is treated as one source even across files.
+- **Medium · Sensitive activity.** On the request path, match the administrative endpoint `/admin` (optional trailing slash), configuration paths `/.env`, `/.git/config`, `/wp-config.php`, `/web.config`, and backup filenames named `backup` with an optional numeric date suffix and extension tar, tar.gz, tgz, zip, sql or sql.gz. Query parameters are excluded. A sudo record must contain a structured `COMMAND=/...` field. Review the observed response or command and expected operational activity.
+
+Priorities are review heuristics. The operator supplies clock settings. Clock uncertainty, shared addresses and ordinary administrative activity can affect interpretation.
+
+## Independent case verification
+
+The ZIP contains a SQLite read-snapshot report, original files under UUID paths, verification instructions, a standard-library verifier and an unsigned SHA-256 manifest. Original filenames and source labels are retained as metadata, including duplicate filenames. The exporter hashes the same bytes it adds to the archive and returns no package on a mismatch. The manifest covers every other archive member. The verifier checks membership, hashes, file sizes and evidence metadata without extracting evidence. Use a trusted copy of the verifier and retain a trusted external digest of the ZIP when independent authentication is needed. Exports currently build the report and ZIP in memory.
+
+From the repository root, verify a downloaded package with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/verify_case.py "path/to/ALIBI_Case_<id>.zip"
+```
 
 Timeline filters: `q`, `evidence_id`, `kind`, `start`, `end`, `limit` (1-1000), `offset`. Time filters require explicit timezone offsets. Search uses bound SQL parameters and literal substring matching; FTS5 is deferred at this scale.
 

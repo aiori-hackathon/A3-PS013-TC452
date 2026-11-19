@@ -31,6 +31,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import Calibration from "./Calibration";
+import LeadReview from "./LeadReview";
 import {
   api,
   jsonBody,
@@ -39,6 +40,7 @@ import {
   type EventRecord,
   type Verification,
   type Finding,
+  type Lead,
   type Audit,
 } from "./types";
 
@@ -296,6 +298,24 @@ export default function App() {
       setDetail(await api<EventRecord>(base + "/records/" + id)),
     );
   }
+  const leads = findings.filter((f): f is Lead => "references" in f);
+  const conflicts = findings.filter(f => !("references" in f));
+  async function downloadCase() {
+    await action(async () => {
+      const response = await fetch("/api" + base + "/case.zip");
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail || "Case export failed. Check the evidence and try again.");
+      }
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ALIBI_Case_" + caseId + ".zip";
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+      setNotice("Complete case downloaded with its SHA-256 manifest and verification instructions.");
+    });
+  }
   const nav: [Tab, typeof Activity, string][] = [
     ["timeline", Activity, "Timeline"],
     ["evidence", Layers3, "Evidence vault"],
@@ -541,6 +561,10 @@ export default function App() {
                 </span>
                 <span>6. Export report</span>
               </div>
+              {tab === "timeline" && leads.length > 0 && <button className="lead-shortcut" onClick={() => setTab("gaps")}>
+                <ShieldQuestion size={19} /><strong>{leads.length} investigative leads</strong>
+                <span>{leads[0].title}</span><ArrowRight size={17} />
+              </button>}
               {tab === "timeline" && (
                 <section className="card timeline-card">
                   <div className="section-heading">
@@ -858,6 +882,7 @@ export default function App() {
                   )}
                 </section>
               )}
+              {tab === "gaps" && <LeadReview key={caseId} leads={leads} inspect={inspect} />}
               {tab === "gaps" && (
                 <section className="card">
                   <div className="section-heading">
@@ -865,7 +890,7 @@ export default function App() {
                       <h2>
                         Gaps & review{" "}
                         <span className="count">
-                          {gaps.length + findings.length}
+                          {gaps.length + conflicts.length}
                         </span>
                       </h2>
                       <p>
@@ -879,7 +904,7 @@ export default function App() {
                     parsing failures and conflicts. It cannot establish that
                     unseen events occurred or that logs are complete.
                   </div>
-                  {findings.map((f, i) => (
+                  {conflicts.map((f, i) => (
                     <article className="gap-item" key={i}>
                       <span className="tag warning">
                         {f.type.replaceAll("_", " ")}
@@ -917,7 +942,7 @@ export default function App() {
                       <pre>{g.raw_line || "(blank record)"}</pre>
                     </article>
                   ))}
-                  {!gaps.length && !findings.length && (
+                  {!gaps.length && !conflicts.length && (
                     <div className="empty">
                       <ShieldCheck size={32} />
                       <h3>No parsing gaps or conflicts found</h3>
@@ -983,6 +1008,13 @@ export default function App() {
                         include a fresh integrity check.
                       </div>
                     )}
+                  </section>
+                  <section className="card package-panel">
+                    <div><h2>Portable case package</h2>
+                      <p>Download the original files, full report, manifest and offline verifier together.</p></div>
+                    <button className="primary" onClick={downloadCase} disabled={busy}>
+                      <ArrowDownToLine size={17} /> Export Complete Case
+                    </button>
                   </section>
                   <section className="exports">
                     {[
