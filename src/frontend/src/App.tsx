@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import Calibration from "./Calibration";
 import LeadReview from "./LeadReview";
+import InvestigationBrief, { signed } from "./InvestigationBrief";
 import {
   api,
   jsonBody,
@@ -294,9 +295,14 @@ export default function App() {
     });
   }
   function inspect(id: string) {
-    action(async () =>
-      setDetail(await api<EventRecord>(base + "/records/" + id)),
-    );
+    action(async () => {
+      const record = await api<EventRecord>(base + "/records/" + id);
+      setDetail(record);
+      const check = record.integrity;
+      if (check && check.status !== "verified") {
+        setChecks(previous => [...previous.filter(v => v.evidence_id !== check.evidence_id), check]);
+      }
+    });
   }
   const leads = findings.filter((f): f is Lead => "references" in f);
   const conflicts = findings.filter(f => !("references" in f));
@@ -561,6 +567,10 @@ export default function App() {
                 </span>
                 <span>6. Export report</span>
               </div>
+              {tab === "timeline" && selected && <InvestigationBrief key={caseId} investigation={selected} files={evidence} leads={leads} checks={checks} busy={busy} inspect={inspect} review={() => setTab("gaps")} verify={() => action(async () => {
+                setChecks(await api<Verification[]>(base + "/verify", {method:"POST"}));
+                setRevision(r => r+1);
+              })} />}
               {tab === "timeline" && leads.length > 0 && <button className="lead-shortcut" onClick={() => setTab("gaps")}>
                 <ShieldQuestion size={19} /><strong>{leads.length} investigative leads</strong>
                 <span>{leads[0].title}</span><ArrowRight size={17} />
@@ -1372,29 +1382,22 @@ export default function App() {
                 : `Integrity: ${detail.integrity?.status}`}
             </span>
             <h3>{detail.error || detail.message}</h3>
+            {!detail.error && <section aria-label="Clock comparison" className="clock-strip">
+              <div><strong>Before</strong><p>Original timestamp<br/>{detail.original_timestamp}</p><small>Normalized UTC<br/>{time(detail.utc_timestamp)}</small></div>
+              <div><strong>Correction</strong><p>{signed(detail.offset_seconds)} s · ±{detail.uncertainty_seconds} s</p><small>{evidence.find(f => f.id === detail.evidence_id)?.correction_reason}</small></div>
+              <div><strong>After</strong><p>Corrected UTC<br/>{time(detail.corrected_timestamp)}</p><small>Supplied interval<br/>{time(detail.interval_start)} — {time(detail.interval_end)}</small></div>
+              <footer>{detail.source} · {detail.filename} · line {detail.line_number} · bytes [{detail.byte_start}, {detail.byte_end})
+                {detail.integrity?.status === "verified" && <a href={"/api" + base + "/evidence/" + detail.evidence_id + "/original"}>Download original file</a>}
+              </footer>
+            </section>}
             <dl>
               <dt>Source</dt>
               <dd>
                 {detail.source} · {detail.filename}
               </dd>
-              <dt>Original timestamp</dt>
-              <dd>{detail.original_timestamp || "Unparsed"}</dd>
-              <dt>Normalized UTC</dt>
-              <dd>{time(detail.utc_timestamp)}</dd>
-              <dt>Corrected UTC</dt>
-              <dd>{time(detail.corrected_timestamp)}</dd>
-              <dt>Uncertainty interval</dt>
-              <dd>
-                {time(detail.interval_start)}
-                <br />
-                {time(detail.interval_end)}
-              </dd>
+              {detail.error && <><dt>Timestamp status</dt><dd>Unparsed · no corrected UTC available</dd></>}
               <dt>Timezone / year basis</dt>
               <dd>{detail.timezone_basis || "Unparsed"}</dd>
-              <dt>Clock correction</dt>
-              <dd>
-                {detail.offset_seconds}s ± {detail.uncertainty_seconds}s
-              </dd>
               <dt>Provenance</dt>
               <dd>
                 Line {detail.line_number} · Bytes [{detail.byte_start},{" "}

@@ -1,0 +1,18 @@
+{
+  "name": "SYNTHETIC / D realistic incident",
+  "description": "A community services portal recorded an administrative request, login retries and a backup archive request during routine site traffic. Review the original records and clock assumptions.",
+  "utc_date": "2026-11-19",
+  "source_count": 3, "physical_records": 40, "normalized": 39, "gaps": 1,
+  "files": [
+    {"filename":"access.log","source":"Portal web gateway","log_format":"access","timezone":"UTC","offset_seconds":0},
+    {"filename":"auth.log","source":"Portal Linux host","log_format":"syslog","timezone":"UTC","year":2026,"offset_seconds":90,"uncertainty_seconds":2,"correction_reason":"Supplied synthetic maintenance measurement: host clock 90 seconds slow, with a two-second bound."},
+    {"filename":"system.log","source":"Service monitor","log_format":"syslog","timezone":"UTC","offset_seconds":0}
+  ],
+  "corrected_utc_by_line":{
+    "access.log":["05:00:00","05:00:12","05:00:45","05:01:10","05:01:50","05:02:05","05:02:35","05:03:00","05:03:09","05:03:42","05:04:00","05:04:40","05:05:20","05:05:50","05:06:10","05:06:35","05:07:00","05:07:40","05:08:20","05:09:00"],
+    "auth.log":["05:00:35","05:00:48","05:02:10","05:02:30","05:02:50","05:02:55","05:03:30","05:04:05","05:04:06","05:05:00","05:06:15","05:07:30",null],
+    "system.log":["05:00:05","05:01:00","05:02:00","05:03:00","05:04:05","05:06:20","05:08:55"]
+  },
+  "key_observations":["access.log:5 records HTTP 401 on /admin","auth.log:5 and auth.log:8 share 203.0.113.24, 75 seconds apart after correction","access.log:14 records HTTP 200 on a backup archive","auth.log:11 records sudo tar --version","auth.log:13 cannot be normalized"],
+  "limitations":["Shared IP does not identify an actor","A response code does not prove exfiltration","Clock correction is supplied fixture knowledge","Overlapping intervals leave ordering uncertain"]
+}

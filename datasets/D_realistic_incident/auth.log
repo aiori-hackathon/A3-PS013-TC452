@@ -1,0 +1,13 @@
+Nov 19 04:59:05 portal-host sshd[311]: Accepted publickey for scheduler from 192.0.2.80 port 50001 ssh2
+Nov 19 04:59:18 portal-host sshd[311]: pam_unix(sshd:session): session opened for user scheduler
+Nov 19 05:00:40 portal-host sshd[347]: Failed password for invalid user ops from 203.0.113.24 port 51001 ssh2
+Nov 19 05:01:00 portal-host sshd[348]: Failed password for ops from 203.0.113.24 port 51003 ssh2
+Nov 19 05:01:20 portal-host sshd[349]: Failed password for ops from 203.0.113.24 port 51005 ssh2
+Nov 19 05:01:25 portal-host sshd[311]: pam_unix(sshd:session): session closed for user scheduler
+Nov 19 05:02:00 portal-host sshd[352]: Failed password for deploy from 198.51.100.90 port 51300 ssh2
+Nov 19 05:02:35 portal-host sshd[355]: Accepted publickey for ops from 203.0.113.24 port 51111 ssh2
+Nov 19 05:02:36 portal-host sshd[355]: pam_unix(sshd:session): session opened for user ops
+Nov 19 05:03:30 portal-host sshd[360]: Accepted publickey for monitor from 192.0.2.81 port 51400 ssh2
+Nov 19 05:04:45 portal-host sudo[380]: ops : TTY=pts/1 ; PWD=/srv ; USER=root ; COMMAND=/usr/bin/tar --version
+Nov 19 05:06:00 portal-host sshd[355]: pam_unix(sshd:session): session closed for user ops
+truncated authentication relay record
