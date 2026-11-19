@@ -57,6 +57,15 @@ export type Verification = {
   checked_at: string;
 };
 export type Finding = { type: string; message: string; record_ids: string[] };
+export type Lead = Finding & {
+  title: string;
+  priority: "High" | "Medium" | "Informational";
+  start: string;
+  end: string;
+  ip: string | null;
+  limitation: string;
+  references: Pick<EventRecord, "id" | "source" | "filename" | "line_number" | "evidence_id">[];
+};
 export type Audit = {
   id: number;
   action: string;

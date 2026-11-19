@@ -588,3 +588,39 @@ summary time {
     font-size: 11px;
   }
 }
+
+.lead-shortcut, .package-panel {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .85rem;
+  padding: 1rem 1.35rem; margin-bottom: 1rem;
+}
+.lead-shortcut {
+  width: 100%; text-align: left; color: #123b68; background: #edf5ff;
+  border: 1px solid #c2d7eb; border-left: 4px solid #205a91; border-radius: 4px; cursor: pointer;
+}
+.lead-shortcut span { flex: 1; }
+.lead-shortcut:hover, .lead-row summary:hover { background: #e3effa; }
+.lead-review { margin-bottom: 1rem; }
+.lead-review .section-heading { flex-wrap: wrap; }
+.lead-review label { color: #43576b; font-size: .86rem; }
+.lead-review select { margin-left: .4rem; padding: .45rem; border: 1px solid #a3b8cc; border-radius: 4px; background: white; color: #123b68; }
+.lead-row { border-top: 1px solid #dce5ed; }
+.lead-row summary { cursor: pointer; display: flex; align-items: center; gap: .8rem; padding: 1rem 1.25rem; color: #153d63; }
+.lead-row summary::-webkit-details-marker { display: none; }
+.lead-row summary small { display: block; margin-top: .25rem; color: #52667b; }
+.lead-chevron { flex-shrink: 0; }
+.lead-row[open] .lead-chevron { transform: rotate(90deg); }
+.lead-row[open] summary { background: #f2f7fc; }
+.lead-priority { margin-left: auto; font-size: .78rem; font-weight: 650; padding: .22rem .55rem; border-radius: 4px; background: #eaf2f9; }
+.lead-priority.high { color: #784600; background: #fff0cc; }
+.lead-priority.medium { color: #654d23; background: #f7f1e5; }
+.lead-body, .lead-empty { padding: .8rem 1.4rem 1.15rem; }
+.lead-body p, .package-panel p { margin: .3rem 0; }
+.lead-limit { color: #536579; }
+.lead-sources { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .75rem; }
+.package-panel { justify-content: space-between; border-left: 4px solid #205a91; }
+.package-panel h2 { margin: 0; }
+@media (max-width: 560px) {
+  .lead-shortcut span { display: none; }
+  .lead-row summary { align-items: flex-start; flex-wrap: wrap; }
+  .lead-row summary > span:first-of-type { flex: 1; min-width: 55%; }
+}

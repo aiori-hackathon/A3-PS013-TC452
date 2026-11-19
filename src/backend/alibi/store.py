@@ -1,6 +1,7 @@
 import json
 import sqlite3
 from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 
 SCHEMA = '''
@@ -40,6 +41,7 @@ class Store:
         self.vault = self.root / 'evidence'
         self.vault.mkdir(parents=True, exist_ok=True)
         self.db_path = self.root / 'alibi.sqlite3'
+        self._reader = ContextVar('case_snapshot', default=None)
         with self.connect() as db:
             db.executescript(SCHEMA)
 
@@ -55,8 +57,21 @@ class Store:
             db.close()
 
     def rows(self, sql, params=()):
+        reader = self._reader.get()
+        if reader is not None:
+            return [dict(row) for row in reader.execute(sql, params)]
         with self.connect() as db:
             return [dict(r) for r in db.execute(sql, params).fetchall()]
+
+    @contextmanager
+    def snapshot(self):
+        with self.connect() as db:
+            db.execute('BEGIN')
+            token = self._reader.set(db)
+            try:
+                yield
+            finally:
+                self._reader.reset(token)
 
     @staticmethod
     def insert(db, table: str, item: dict):

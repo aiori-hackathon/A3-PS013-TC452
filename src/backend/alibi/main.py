@@ -15,6 +15,8 @@ from .parsers import parse_bytes, utc_text
 from .store import Store
 from .reports import make_pdf, LIMITATIONS
 from .calibration import register_calibration
+from .leads import investigative_leads
+from .package import case_package
 
 MAX_UPLOAD = 10 * 1024 * 1024
 MAX_RECORDS = 50000
@@ -230,7 +232,7 @@ def create_app(data_dir: Path | None = None):
                 if old and old['status'] and event['status'] and old['status'] != event['status']:
                     result.append({'type': 'conflicting_identifier', 'message': f"Identifier {event['anchor_id']} has differing HTTP statuses within one source. May be reuse, retries, or contradictory records; investigate.", 'record_ids': [old['id'], event['id']]})
                 identities[key] = event
-        return result
+        return result + investigative_leads(records)
 
     @app.get('/api/investigations/{case_id}/audit')
     def audit(case_id: str):
@@ -248,6 +250,14 @@ def create_app(data_dir: Path | None = None):
     @app.get('/api/investigations/{case_id}/report.json')
     def json_report(case_id: str):
         return Response(json.dumps(build_report(case_id), indent=2, ensure_ascii=False), media_type='application/json', headers={'Content-Disposition': 'attachment; filename="alibi-report.json"'})
+
+    @app.get('/api/investigations/{case_id}/case.zip', response_class=Response)
+    def export_case(case_id: str):
+        with store.snapshot():
+            report = build_report(case_id)
+        package = case_package(report, store.vault)
+        return Response(package, media_type='application/zip', headers={
+            'Content-Disposition': f'attachment; filename="ALIBI_Case_{case_id}.zip"'})
 
     @app.get('/api/investigations/{case_id}/report.pdf')
     def pdf_report(case_id: str):
